@@ -28,7 +28,10 @@ app.set(express.json());
 app.use(bodyParser.urlencoded({'extended': false}));
 app.use(bodyParser.json()); //this is needed to have swagger pass the json to the node api
 
-let conn = 'mongodb+srv://web420_user:s3cret@buwebdev-cluster-1.pldlt.mongodb.net/web420DB?retryWrites=true&w=majority';
+const conn = process.env.MONGODB_URI;
+if (!conn) {
+    throw new Error('MONGODB_URI must be set in the server environment.');
+}
 mongoose.connect(conn, {
     promiseLibrary: require('bluebird'),
     useUnifiedTopology: true,
@@ -36,7 +39,7 @@ mongoose.connect(conn, {
 }).then(() => {
     console.log(`Connection to web420DB on MongoDB Atlas Successful`)
 }).catch(error => {
-    console.log(`MongoDB Error: ${error.message}`);
+    console.error('MongoDB connection failed. Check the server database configuration.');
 })
 
 const options = {
